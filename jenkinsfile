@@ -20,7 +20,7 @@ pipeline {
             steps {
                 script {
                     try {
-                        sh 'npm test'
+                        sh 'jest test'
                         currentBuild.result = 'SUCCESS'
                     } catch (Exception e) {
                         currentBuild.result = 'FAILURE'
