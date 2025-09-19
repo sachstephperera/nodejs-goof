@@ -1,13 +1,14 @@
-
 pipeline {
     agent any
     tools {
-        nodejs "node20"   // same name you gave in Tools config
+        nodejs "node20"   // NodeJS installation from Jenkins global tools
     }
     stages {
         stage('Checkout') {
             steps {
-                git branch: 'main', url: 'https://github.com/sachstephperera/nodejs-goof', credentialsId: '2372c8ce-7169-4c9d-a54e-f84f79efbbae'
+                git branch: 'main',
+                url: 'https://github.com/sachstephperera/nodejs-goof',
+                credentialsId: '2372c8ce-7169-4c9d-a54e-f84f79efbbae'
             }
         }
         stage('Install Dependencies') {
@@ -17,18 +18,61 @@ pipeline {
         }
         stage('Run Tests') {
             steps {
-                sh 'npm test || true' // Allows pipeline to continue despite test failures
+                script {
+                    try {
+                        sh 'npm test'
+                        currentBuild.result = 'SUCCESS'
+                    } catch (Exception e) {
+                        currentBuild.result = 'FAILURE'
+                        throw e
+                    }
+                }
+            }
+            post {
+                always {
+                    emailext(
+                        to: 'developer-team@example.com',
+                        subject: "Jenkins Build #${env.BUILD_NUMBER} - Test Stage Result: ${currentBuild.result}",
+                        body: """Hello Team,<br><br>
+                                The <b>Run Tests</b> stage completed with status: <b>${currentBuild.result}</b>.<br>
+                                Please check the attached logs for details.<br><br>
+                                Regards,<br>Jenkins CI""",
+                        mimeType: 'text/html',
+                        attachLog: true
+                    )
+                }
             }
         }
         stage('Generate Coverage Report') {
             steps {
-                // Ensure coverage report exists
                 sh 'npm run coverage || true'
             }
         }
         stage('NPM Audit (Security Scan)') {
             steps {
-                sh 'npm audit || true' // This will show known CVEs in the output
+                script {
+                    try {
+                        sh 'npm audit'
+                        currentBuild.result = 'SUCCESS'
+                    } catch (Exception e) {
+                        currentBuild.result = 'FAILURE'
+                        throw e
+                    }
+                }
+            }
+            post {
+                always {
+                    emailext(
+                        to: 'sachinthaisuru2001@gmail.com',
+                        subject: "Jenkins Build #${env.BUILD_NUMBER} - Security Scan Result: ${currentBuild.result}",
+                        body: """Hello Team,<br><br>
+                                The <b>NPM Audit (Security Scan)</b> stage completed with status: <b>${currentBuild.result}</b>.<br>
+                                Please check the attached logs for vulnerabilities.<br><br>
+                                Regards,<br>Jenkins CI""",
+                        mimeType: 'text/html',
+                        attachLog: true
+                    )
+                }
             }
         }
     }
