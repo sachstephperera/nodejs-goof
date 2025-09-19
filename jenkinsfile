@@ -4,7 +4,7 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git branch: 'main', url: ' https://github.com/your_github_username/8.2CDevSecOps.git', credentialsId: '2372c8ce-7169-4c9d-a54e-f84f79efbbae'
+                git branch: 'main', url: 'https://github.com/sachstephperera/nodejs-goof', credentialsId: '2372c8ce-7169-4c9d-a54e-f84f79efbbae'
             }
         }
         stage('Install Dependencies') {
