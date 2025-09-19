@@ -20,7 +20,7 @@ pipeline {
             steps {
                 script {
                     try {
-                        sh 'jest test'
+                        sh 'npm test'
                         currentBuild.result = 'SUCCESS'
                     } catch (Exception e) {
                         currentBuild.result = 'FAILURE'
@@ -31,7 +31,7 @@ pipeline {
             post {
                 always {
                     emailext(
-                        to: 'developer-team@example.com',
+                        to: 'sachinthaisuru2001@gmail.com',
                         subject: "Jenkins Build #${env.BUILD_NUMBER} - Test Stage Result: ${currentBuild.result}",
                         body: """Hello Team,<br><br>
                                 The <b>Run Tests</b> stage completed with status: <b>${currentBuild.result}</b>.<br>
