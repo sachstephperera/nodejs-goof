@@ -2,7 +2,7 @@
 pipeline {
     agent any
     tools {
-        nodejs "Node20"   // same name you gave in Tools config
+        nodejs "node20"   // same name you gave in Tools config
     }
     stages {
         stage('Checkout') {
